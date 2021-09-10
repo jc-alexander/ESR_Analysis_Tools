@@ -854,7 +854,9 @@ class DEER(object):
             plt.xlim(np.min(self.deer_freqs),np.max(self.deer_freqs))
             plt.xlabel("DEER Pulse Frequency (MHz)")
             plt.ylabel("Echo Amplitude (V)")
-            plt.legend()
+            lgnd = plt.legend(bbox_to_anchor=(1, 1.05),fontsize=10)
+            for line in lgnd.get_lines():
+                line.set_linewidth(4.0)
 
         if return_data == True:
             return self.data
