@@ -48,6 +48,10 @@ def T1_inversion_fit(x,a,b,c):
 def T1_biexponential_fit(x,a,b,c):
     return a*np.exp(-(x/b))+c*np.exp(-(x/d)) + e
 
+
+
+
+
 class T2(object):
     """Analysis for T2 measurements - fitting and plotting
        takes raw waits, I and Q"""
@@ -797,3 +801,60 @@ class T2_temp_dep(object):
           plt.ylabel(r"Decoherence Rate (1/T$_{2}$) (kHz)")
 
           return popt,sigmas,self.lines
+
+class DEER(object):
+    """Analysis for double electron-electron resonance"""
+
+    def __init__(self,Is,Qs,deer_freqs):
+        self.Is = Is
+        self.Qs = Qs
+        self.deer_freqs = deer_freqs
+
+    def integrate_echos(self,start=90,stop=120,noise_idx=-30,return_values=False):
+        """inegrates echos and returns pandas array of data"""
+        self.start = start
+        self.stop = stop
+        self.noise_idx = noise_idx
+        I = np.mean(self.Is,axis=1) - np.mean(np.mean(self.Is,axis=1)[-1][self.noise_idx:])
+        Q = np.mean(self.Qs,axis=1) - np.mean(np.mean(self.Qs,axis=1)[-1][self.noise_idx:])
+        mag = np.sqrt(np.square(I)+np.square(Q))
+        self.mags = mag
+        mag_ints,I_ints,Q_ints = [],[],[]
+        for i in range(len(mag)):
+            I_int = np.mean(I[i][start:stop])
+            Q_int = np.mean(Q[i][start:stop])
+            mag_int = np.mean(mag[i][start:stop])
+            I_ints.append(I_int)
+            Q_ints.append(Q_int)
+            mag_ints.append(mag_int)
+        self.I_ints = I_ints
+        self.Q_ints = Q_ints
+        self.mag_ints = mag_ints
+
+        collected_data = {"Frequency (MHz)":self.deer_freqs[:len(mag_ints)],
+                          "I ints (mV)": np.array(I_ints)*1e3,
+                          "Q ints (mV)": np.array(Q_ints)*1e3,
+                          "mag ints (mV)": np.array(mag_ints)*1e3}
+        data = pd.DataFrame(collected_data)
+        self.data = data
+        if return_values == True:
+            return data
+
+    def analyse(self,start=90,stop=120,noise_idx=-30,plot=True,plot_I=False,plot_Q=False,return_data=False):
+        self.integrate_echos(start=90,stop=120,noise_idx=-30)
+
+        if plot == True:
+            plt.plot(self.deer_freqs[:len(self.mag_ints)],self.mag_ints,lw=0.1,label="Mag",color="k")
+        if plot_I == True:
+            plt.plot(self.deer_freqs[:len(self.mag_ints)],self.I_ints,lw=0.1,label="I",color="tab:red")
+        if plot_Q == True:
+            plt.plot(self.deer_freqs[:len(self.mag_ints)],self.Q_ints,lw=0.1,label="Q",color="tab:pink")
+        if plot == True:
+            plt.ylim(0)
+            plt.xlim(np.min(self.deer_freqs),np.max(self.deer_freqs))
+            plt.xlabel("DEER Pulse Frequency (MHz)")
+            plt.ylabel("Echo Amplitude (V)")
+            plt.legend()
+
+        if return_data == True:
+            return self.data
