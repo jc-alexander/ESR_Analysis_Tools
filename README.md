@@ -2,8 +2,9 @@
 
 Install using:
 
-`pip install git+git://github.com/jc-alexander/ESR_Analysis_Tools`
-
+`git clone https://github.com/jc-alexander/ESR_Analysis_Tools.git
+cd ESR_Analysis_Tools
+pip install .`
 See examples notebook for basics
 
 data used in examples from:
