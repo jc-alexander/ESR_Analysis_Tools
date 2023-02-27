@@ -2,7 +2,7 @@
 
 Install using:
 
-pip install git+git://github.com/jc-alexander/ESR_Analysis_Tools
+`pip install git+git://github.com/jc-alexander/ESR_Analysis_Tools`
 
 See examples notebook for basics
 
