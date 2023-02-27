@@ -1,8 +1,8 @@
-Welcome to ESR TOOLS for pulsed ESR
+### Welcome to ESR TOOLS for pulsed ESR
 
 Install using:
 
-$ pip install git+git://github.com/jc-alexander/ESR_Analysis_Tools
+pip install git+git://github.com/jc-alexander/ESR_Analysis_Tools
 
 See examples notebook for basics
 
